@@ -1,51 +1,111 @@
 
-//An individual stop watch.
-//Start, Stop, reset, display
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
 
+
+//Stopwatch
 public class StopWatch {
 
-    long startTime = 0;
-    long endTime = 0;
-    long elapsedTime = 0;
-    boolean active = false;
+    private Instant start, end;      //to measure elapsed time
+    private Duration elapsed;        //to store elapsed time
+    private Date startDate, endDate; //start/end clock times
+    boolean isActive;  //TRUE: Is on and waiting to be stopped
+    boolean isReset;   //TRUE: Flag to print a null times
 
-    // If inactive, activate and record startTime
-    void start() {
-        if(!active) {
-            active = true;
-            startTime = System.currentTimeMillis();
+
+    StopWatch(){
+        isReset = true;
+        isActive = false;
+        start = Instant.now();
+        end = Instant.now();
+        endDate = startDate = Date.from(start);
+        elapsed = Duration.between(start, end);
+    }
+
+    public void start() {
+        if(!isActive)
+        {
+            isActive = true;
+            isReset = false;
+            start = Instant.now();
+            startDate = Date.from(start);
         }
+        else
+            System.out.println("Cant start, Its already going");
     }
 
     // If active, make inactive and record current endTime,
     // then record elapsed time.
-    void stop() {
-        if(active) {
-            active = false;
-            endTime = System.currentTimeMillis();
-            elapsedTime = endTime - startTime;
+    public void stop() {
+        if(isActive)
+        {
+            isActive = false;
+            end = Instant.now();
+            endDate = Date.from(end);
+            elapsed = Duration.between(start, end);
         }
+        else
+            System.out.println("Cant stop, Its not going yet");
+
     }
 
     //Set all times to zero, and active to false
-    void reset() {
-        active = false;
-        startTime = endTime = 0;
+    public void reset() {
+        isActive = false;
+        isReset = true;
     }
 
-    long getStartTime(){ return startTime; }
-    long getEndTime(){ return endTime; }
-    long getElapsedTime() {return elapsedTime; }
+    public void display() {
+        String sStr, fStr, eStr;
+        eStr = formatDuration(this.elapsed);
+        sStr = formatTime(this.startDate);
+        fStr = formatTime(this.endDate);
+        this.elapsed = Duration.between(start, end);
+
+        System.out.println();
+        if(!isReset) {
+            if(isActive) {
+                System.out.println("            ACTIVE...");
+                System.out.println("            Start: " + sStr);
+                System.out.println("            Stop:  00:00");
+                System.out.println("            TIME:  00:00");
+            }
+            else {
+                System.out.println("            Start: " + sStr);
+                System.out.println("            Stop: " + fStr);
+                System.out.println("            TIME: " + eStr);
+            }
+        }
+        else {
+            System.out.println("            Start: 00:00");
+            System.out.println("            Stop:  00:00");
+            System.out.println("            TIME:  00:00");
+        }
+        System.out.println();
+    }
 
 
-    //
+    public static String formatTime(Date date)  {
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        return timeFormat.format(date);
+    }
 
 
+    //Takes Duration and returns human readable String.
+    //In this case HH:MM:SS
+    public static String formatDuration(Duration duration) {
+        long seconds = duration.getSeconds();
+        long absSeconds = Math.abs(seconds);
 
+        String positive = String.format( "%d:%02d:%02d",
+                absSeconds / 3600,         //hours
+                (absSeconds % 3600) / 60,  //minutes
+                absSeconds % 60);          //seconds
 
-
-    void pause() {
-
+        //If seconds < 0 add a negative in front, else don't.
+        return seconds < 0 ? "-" + positive : positive;
     }
 
 }
