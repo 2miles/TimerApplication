@@ -13,14 +13,13 @@ public class Menu {
 
     //Display the menu options
     void printMenu() {
-        System.out.println();
-        System.out.println("------------------------------------------");
+        System.out.println("--------------------");
         System.out.println("1. START");
         System.out.println("2. STOP");
         System.out.println("3. Display");
         System.out.println("4. Reset");
         System.out.println("0. QUIT");
-        System.out.println("------------------------------------------");
+        System.out.println("-------------------");
     }
 
 
@@ -30,6 +29,7 @@ public class Menu {
         do {
             printMenu();
             System.out.print("Choose menu item: ");
+            System.out.println();
             menuItem = in.nextInt();
             switch (menuItem)
             {

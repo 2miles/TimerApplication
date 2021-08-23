@@ -1,3 +1,5 @@
+//Todo
+// Print the date at the beginnigng of every stopwatch result
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -31,6 +33,7 @@ public class StopWatch {
             isReset = false;
             start = Instant.now();
             startDate = Date.from(start);
+            System.out.println("            Stopwatch started");
         }
         else
             System.out.println("Cant start, Its already going");
@@ -45,6 +48,7 @@ public class StopWatch {
             end = Instant.now();
             endDate = Date.from(end);
             elapsed = Duration.between(start, end);
+            System.out.println("            Stopwatch stopped");
         }
         else
             System.out.println("Cant stop, Its not going yet");
@@ -74,8 +78,8 @@ public class StopWatch {
             }
             else {
                 System.out.println("            Start: " + sStr);
-                System.out.println("            Stop: " + fStr);
-                System.out.println("            TIME: " + eStr);
+                System.out.println("            Stop:  " + fStr);
+                System.out.println("            TIME:  " + eStr);
             }
         }
         else {
