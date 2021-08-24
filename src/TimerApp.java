@@ -1,18 +1,18 @@
 import java.util.Scanner;
 
 
-public class Menu {
+public class TimerApp {
 
     private Scanner in = new Scanner(System.in); //get menu choice
     private boolean isQuit = false;        //flag to end menu loop
     StopWatch stopWatch = new StopWatch();
 
-    Menu() {
-        chooseItem();
+    TimerApp() {
+        StopwatchMenu();
     }
 
-    //Display the menu options
-    void printMenu() {
+    //Display the stopwatch functionality options
+    void printStopwatchMenu() {
         System.out.println("--------------------");
         System.out.println("1. START");
         System.out.println("2. STOP");
@@ -22,12 +22,11 @@ public class Menu {
         System.out.println("-------------------");
     }
 
-
     //Get input from user to access program functions
-    void chooseItem () {
+    void StopwatchMenu() {
         int menuItem;
         do {
-            printMenu();
+            printStopwatchMenu();
             System.out.print("Choose menu item: ");
             System.out.println();
             menuItem = in.nextInt();

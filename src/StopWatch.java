@@ -1,5 +1,6 @@
 //Todo
-// Print the date at the beginnigng of every stopwatch result
+// Print the date at the beginning of every stopwatch result
+// Add some comments at the beginning of each function
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -15,6 +16,7 @@ public class StopWatch {
     private Date startDate, endDate; //start/end clock times
     boolean isActive;  //TRUE: Is on and waiting to be stopped
     boolean isReset;   //TRUE: Flag to print a null times
+    String name;
 
 
     StopWatch(){
@@ -24,6 +26,7 @@ public class StopWatch {
         end = Instant.now();
         endDate = startDate = Date.from(start);
         elapsed = Duration.between(start, end);
+
     }
 
     public void start() {
