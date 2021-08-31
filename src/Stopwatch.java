@@ -1,105 +1,144 @@
+import java.time.*;  //Duration, Instant
+import java.util.*; //Date, Scanner
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Date;
-import java.util.Scanner;
 
-
-//One single stopwatch and its menus
+//A stopwatch including its menu interface
 public class Stopwatch {
-    private final Scanner in = new Scanner(System.in); //get menu choice
-    private boolean isQuit = false;        //flag to end menu loop
-    private Instant start, end;      //to measure elapsed time
-    private Duration elapsed;        //to store elapsed time
-    private Date startDate, endDate; //start/end clock times
-    boolean isActive;  //TRUE: Is on and waiting to be stopped
-    boolean isReset;   //TRUE: Flag to print a null times
+    private Instant startInstant, stopInstant;      //to measure elapsed time
+    private Duration elapsedDuration;        //to store elapsed time
+    private Date startTime, stopTime; //start/stop clock times
+    private boolean isActive;  //TRUE: Is on and waiting to be stopped
 
-    public Stopwatch(){
-        isReset = true;
+    // stopwatch menu is automatic
+    public Stopwatch() {
         isActive = false;
-        start = Instant.now();
-        end = Instant.now();
-        endDate = startDate = Date.from(start);
-        elapsed = Duration.ZERO;
+        startInstant = stopInstant = Instant.now();
+        stopTime = startTime = Date.from(startInstant);
+        elapsedDuration = Duration.ZERO;
         StopwatchMenu(this);
     }
 
-
+    // Record start time. Print small message
+    // Stopwatch goes into Active mode and is
     public void start() {
-        if(!isActive)
-        {
+        if(!isActive) {
+            startInstant = Instant.now();
+            startTime = Date.from(startInstant);
             isActive = true;
-            isReset = false;
-            start = Instant.now();
-            startDate = Date.from(start);
-            System.out.println("            Stopwatch started");
+            System.out.println("Started");
+        } else {
+            System.out.println("Too late");
         }
-        else
-            System.out.println("Cant start, Its already going");
     }
 
-
-    // If active, make inactive and record current endTime,
-    // then record elapsed time.
+    // Record stop time and calculate elapsed time
+    // If active, make inactive and record current stopTime,
     public void stop() {
-        if(isActive)
-        {
+        if(isActive) {
             isActive = false;
-            end = Instant.now();
-            endDate = Date.from(end);
-            elapsed = Duration.between(start, end);
-            System.out.println("            Stopwatch stopped");
+            stopInstant = Instant.now();
+            stopTime = Date.from(stopInstant);
+            elapsedDuration = Duration.between(startInstant, stopInstant);
+            System.out.println("Stopped");
+        } else {
+            System.out.println("ERROR");
         }
-        else
-            System.out.println("Cant stop, Its not going yet");
     }
-
 
     //Set all times to zero, and active to false
     public void reset() {
         isActive = false;
-        isReset = true;
+        elapsedDuration = Duration.ZERO;
+        startInstant = stopInstant = Instant.now();
+        stopTime = startTime = Date.from(startInstant);
+
     }
 
+    //Display the stopwatch functionality options
+    public void printStopwatchMenu() {
+        System.out.println("1. Start");
+        System.out.println("2. Stop");
+        System.out.println("3. Display");
+        System.out.println("4. Clear");
+        System.out.println("0. Back");
+        System.out.print("Enter: ");
+    }
+
+    //Get input from user to access program functions
+    public void StopwatchMenu(Stopwatch watch) {
+        final Scanner in = new Scanner(System.in);
+        boolean isQuit = false;
+        do {
+            printStopwatchMenu();
+            int menuItem = in.nextInt();
+
+            switch (menuItem) {
+                case 1: //start
+                    watch.start();
+                    System.out.println(this);
+                    break;
+                case 2: //stop
+                    watch.stop();
+                    System.out.println(this);
+                    break;
+                case 3: //Display
+                    System.out.println(this);
+                    break;
+                case 4: //Reset
+                    watch.reset();
+                    System.out.println(this);
+                    break;
+                case 0: //back
+                    isQuit = true;
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        } while (!isQuit);
+    }
 
     public String displayStopwatch() {
-        String sStr, fStr, eStr;
-        eStr = formatDuration(this.elapsed);
-        sStr = formatTime(this.startDate);
-        fStr = formatTime(this.endDate);
-        this.elapsed = Duration.between(start, end);
+        String  start = timeToString(startTime),
+                stop = timeToString(stopTime),
+                elapsed = DurationToString(elapsedDuration),
+                output;
 
-        String result = "";
-        result += "\n            ";
-        if(!isReset) {
-            if(isActive) { result += (sStr + " -> 00:00,  [00:00]   -ACTIVE-"); }
-            else         { result += (sStr + " -> " + fStr + ",  [" + eStr + "]"); }
+        output = ("\nSTART  STOP   TIME     STATUS\n");
+        if(isActive) {
+            Instant tempStop = Instant.now();
+            Duration elapsedDTemp = Duration.between(startInstant, tempStop);
+            String tempElapsed = DurationToString(elapsedDTemp);
+            output += (start + "  ??:??  " + tempElapsed);
+            output += "  ON";
+        } else { // not active
+            if(startInstant.equals(stopInstant)) {
+                output = ("00:00  00:00  00:00:00");
+            } else {
+                output += (start + "  " + stop + "  " + elapsed);
+            }
+            output += "  OFF";
         }
-        else { result += ("00:00 -> 00:00,  [00:00]"); }
-        result += "\n";
-
-        return result;
-
+        output += "\n---------------------------";
+        return output;
     }
 
-
-    public static String formatTime(Date date)  {
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        return timeFormat.format(date);
+    //Returns: 04:20
+    public static String timeToString(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        return sdf.format(date);
     }
 
-    public static String formatDate(Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d, ''yy");
-        return dateFormat.format(date);
+    //Returns: Wed, Aug 23, '21
+    public static String dateToString(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, ''yy");
+        return sdf.format(date);
     }
-
 
     //Takes Duration and returns human readable String.
     //In this case HH:MM:SS
-    public static String formatDuration(Duration duration) {
+    public static String DurationToString(Duration duration) {
         long seconds = duration.getSeconds();
-        long absSeconds = Math.abs(seconds);
+        long absSeconds = Math.abs(duration.getSeconds());
         String positive = String.format( "%d:%02d:%02d",
                 absSeconds / 3600,         //hours
                 (absSeconds % 3600) / 60,  //minutes
@@ -107,53 +146,6 @@ public class Stopwatch {
         //If seconds < 0 add a negative in front, else don't.
         return seconds < 0 ? "-" + positive : positive;
     }
-
-
-    //Display the stopwatch functionality options
-    public static void printStopwatchMenu() {
-        System.out.println("--------------------");
-        System.out.println("1. START");
-        System.out.println("2. STOP");
-        System.out.println("3. Display");
-        System.out.println("4. Reset");
-        System.out.println("0. Back");
-        System.out.println("-------------------");
-    }
-
-
-    //Get input from user to access program functions
-    public void StopwatchMenu(Stopwatch watch) {
-        int menuItem;
-        do {
-            printStopwatchMenu();
-            System.out.print("Choose menu item: ");
-            System.out.println();
-            menuItem = in.nextInt();
-            switch (menuItem)
-            {
-                case 1: //start
-                    watch.start();
-                    break;
-                case 2: //stop
-                    watch.stop();
-                    break;
-                case 3: //display
-                    System.out.println(watch.displayStopwatch());
-                    break;
-                case 4: //reset
-                    watch.reset();
-                    break;
-                case 0: //quit
-                {
-                    isQuit = true;
-                    break;
-                }
-                default:
-                    System.out.println("Invalid choice.");
-            }
-        } while (!isQuit);
-    }
-
 
     @Override
     public String toString() {

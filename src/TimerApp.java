@@ -1,51 +1,42 @@
-import java.util.Scanner;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-
+import java.util.*; //Scanner, SortedSet, TreeSet
 
 public class TimerApp {
 
-    private Scanner in = new Scanner(System.in); //get TimerApp main menu choice
-    private boolean isQuit = false;        //flag to end TimerApp main menu loop
-    private SortedSet<Task> timers = new TreeSet<>();  //Tree of timers sorted by name
+    private SortedSet<Task> timers;  //Tree of timers sorted by name
 
     TimerApp() {
-        TimerAppMenu();
+        timers = new TreeSet<>();
+        mainMenuLoop();
     }
-    public static void printTimerAppMenu() {
-        //Display Task menu options
 
-        System.out.println("--TaskMenu----------");
-        System.out.println("1. New Task ");
-        System.out.println("2. Continue ");
-        System.out.println("3. Display ");
-        System.out.println("0. QUIT");
-        System.out.println("-------------------");
-    }
-    public void TimerAppMenu() {
-        //Get input from user to access program functions
+    public void mainMenuLoop() {
+        Scanner in = new Scanner(System.in);
+        boolean isQuit = false;
 
-        int menuItem;
         do {
-            printTimerAppMenu();
-            System.out.print("Choose menu item: ");
-            System.out.println();
-            menuItem = in.nextInt();
+            printMainMenu();
+            int menuItem = in.nextInt();
+
             switch (menuItem) {
                 case 1: //new task
-                {
                     timers.add(new Task());
                     break;
-                }
+                case 2: //Display tasks
+                    System.out.println(timers);
+                    break;
                 case 0: //quit
-                {
                     isQuit = true;
                     break;
-                }
                 default:
                     System.out.println("Invalid choice.");
             }
         } while (!isQuit);
+    }
+
+    //Display Task menu options
+    public static void printMainMenu() {
+        System.out.println("1. New task");
+        System.out.println("0. quit");
+        System.out.print("Enter: ");
     }
 }

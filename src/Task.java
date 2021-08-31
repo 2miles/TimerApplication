@@ -1,15 +1,12 @@
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;  //ArrayList, List, Scanner
 
 
 //One task: a named list of stopwatches and their total duration summed up
 public class Task implements Comparable<Task>{
-    private String name;               //used to compare tasks for order and equality
-    private Duration totalElapsed;              //sum of individual timer totals for a task
-    private List<Stopwatch> watches = new ArrayList<>();  //list of stopwatches for a task
-
+    private String name;
+    private final Duration totalElapsed;        //sum of individual timer totals for a task
+    private final List<Stopwatch> watches = new ArrayList<>();  //list of stopwatches for a task
 
     public Task(){
         readName();
@@ -18,8 +15,7 @@ public class Task implements Comparable<Task>{
     }
 
     public void readName(){
-        //Get Task name from user
-        System.out.print("Enter a name: ");
+        System.out.print("Enter task name: ");
         Scanner scanner = new Scanner(System.in);
         name = scanner.nextLine();
     }
@@ -32,11 +28,8 @@ public class Task implements Comparable<Task>{
     @Override
     //print Task as (Name, totalTime)
     public String toString() {
-        String result = name + ": "
-                + Stopwatch.formatDuration(totalElapsed)
+        return name + ": " + Stopwatch.DurationToString(totalElapsed)
                 + "\n" + watches;
-
-        return result;
-
     }
+
 }
