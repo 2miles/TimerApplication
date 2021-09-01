@@ -10,8 +10,10 @@ public class Task implements Comparable<Task>{
 
     public Task(){
         readName();
+        System.out.println("Task created");
+        System.out.println();
         totalElapsed = Duration.ZERO;
-        watches.add(new Stopwatch());
+        watches.add(new Stopwatch(this.name));
     }
 
     public void readName(){

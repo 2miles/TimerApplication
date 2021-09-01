@@ -4,20 +4,24 @@ import java.text.SimpleDateFormat;
 
 //A stopwatch including its menu interface
 public class Stopwatch {
+    private String name;
     private Instant startInstant, stopInstant;      //to measure elapsed time
     private Duration elapsedDuration;        //to store elapsed time
     private Date startTime, stopTime; //start/stop clock times
     private boolean isActive;  //TRUE: Is on and waiting to be stopped
 
-    // stopwatch menu is automatic
     public Stopwatch() {
+        this("");
+    }
+
+    public Stopwatch(String name) {
+        this.name = fixedLengthString(name, 10);
         isActive = false;
         startInstant = stopInstant = Instant.now();
         stopTime = startTime = Date.from(startInstant);
         elapsedDuration = Duration.ZERO;
         StopwatchMenu(this);
     }
-
     // Record start time. Print small message
     // Stopwatch goes into Active mode and is
     public void start() {
@@ -61,6 +65,7 @@ public class Stopwatch {
         System.out.println("3. Display");
         System.out.println("4. Clear");
         System.out.println("0. Back");
+        System.out.println();
         System.out.print("Enter: ");
     }
 
@@ -97,28 +102,30 @@ public class Stopwatch {
         } while (!isQuit);
     }
 
+//Todo
+// 1. add task name and date to stopwatch print function
+// 2. remove status from stopwatch print function
     public String displayStopwatch() {
-        String  start = timeToString(startTime),
-                stop = timeToString(stopTime),
-                elapsed = DurationToString(elapsedDuration),
-                output;
+        String dateStr = dateToString(startTime);
+        String startStr = timeToString(startTime);
+        String stopStr = timeToString(stopTime);
+        String elapsedStr = DurationToString(elapsedDuration);
+        String output ;
 
-        output = ("\nSTART  STOP   TIME     STATUS\n");
+        output = ("\n TASK        DATE        START  STOP   TIME\n");
+        output += (name + "   " + dateStr + "  ");
         if(isActive) {
-            Instant tempStop = Instant.now();
-            Duration elapsedDTemp = Duration.between(startInstant, tempStop);
-            String tempElapsed = DurationToString(elapsedDTemp);
-            output += (start + "  ??:??  " + tempElapsed);
-            output += "  ON";
+            Duration temp = Duration.between(startInstant, Instant.now());
+            elapsedStr = DurationToString(temp);
+            output += (startStr + "  ??:??  " + elapsedStr);
         } else { // not active
             if(startInstant.equals(stopInstant)) {
-                output = ("00:00  00:00  00:00:00");
+                output += ("00:00  00:00  0:00:00");
             } else {
-                output += (start + "  " + stop + "  " + elapsed);
+                output += (startStr + "  " + stopStr + "  " + elapsedStr);
             }
-            output += "  OFF";
         }
-        output += "\n---------------------------";
+        output += "\n ---------------------------------------------";
         return output;
     }
 
@@ -130,7 +137,8 @@ public class Stopwatch {
 
     //Returns: Wed, Aug 23, '21
     public static String dateToString(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, ''yy");
+        //SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, ''yy");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(date);
     }
 
@@ -145,6 +153,10 @@ public class Stopwatch {
                 absSeconds % 60);          //seconds
         //If seconds < 0 add a negative in front, else don't.
         return seconds < 0 ? "-" + positive : positive;
+    }
+
+    public static String fixedLengthString(String string, int length) {
+        return String.format("%1$"+length+ "s", string);
     }
 
     @Override
